@@ -9,6 +9,8 @@
 import UIKit
 import CoreNFC
 import CommonCrypto
+import Combine
+//import CombineExt
 
 let KEY = "qMVsOd8szYWv!HQU"//"BREAKMEIFYOUCAN!"//"BREAKMEIFYOUCAN!"
 //let NEW_KEY = "BREAKMEIFYOUCAN!"
@@ -253,45 +255,3 @@ extension ViewController: NFCTagReaderSessionDelegate {
     }
 }
 
-extension Data {
-    struct HexEncodingOptions: OptionSet {
-        let rawValue: Int
-        static let upperCase = HexEncodingOptions(rawValue: 1 << 0)
-    }
-
-    func hexEncodedString(options: HexEncodingOptions = []) -> String {
-        let format = options.contains(.upperCase) ? "%02hhX" : "%02hhx"
-        return self.map { String(format: format, $0) }.joined(separator: ":")
-    }
-    
-    var bytes: [UInt8] { [UInt8](self) }
-    
-    var string: String? { String(data: self, encoding: .utf8) }
-    
-    static func random(count: Int) -> Data? {
-        var keyData = Data(count: count)
-        let result = keyData.withUnsafeMutableBytes {
-            SecRandomCopyBytes(kSecRandomDefault, count, $0.baseAddress!)
-        }
-        if result == errSecSuccess {
-            return keyData
-        } else {
-            return nil
-        }
-    }
-}
-
-extension Array where Element == UInt8 {
-    var data: Data { Data(self) }
-}
-
-extension String {
-    var hexadecimal: Data {
-        Data(self.utf8)
-    }
-    
-    static func randomString(length: Int) -> String {
-      let letters = "!#$%0123456789?@ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-      return String((0..<length).map{ _ in letters.randomElement()! })
-    }
-}
