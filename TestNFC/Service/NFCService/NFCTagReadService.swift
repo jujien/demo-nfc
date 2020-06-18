@@ -13,7 +13,7 @@ protocol NFCTagRead {
     func read(session: NFCTagSession, start page: UInt8) -> Observable<Data>
 }
 
-struct DefaultNFCTagReadService: NFCTagRead {
+struct DefaultNFCTagRead: NFCTagRead {
     func read(session: NFCTagSession, start page: UInt8) -> Observable<Data> {
         guard session.tags.count == 1 else { return .error(ErrorCode.ConnectNFCError.notSupportMultipleTags) }
         
@@ -28,6 +28,80 @@ struct DefaultNFCTagReadService: NFCTagRead {
                 }
             }
             return Disposables.create()
+        }
+    }
+}
+
+protocol NFCTagReadService {
+    func read(session: NFCTagSession, start page: UInt8, totalByte: Int) -> Observable<Data>
+}
+
+extension NFCTagReadService {
+    func readAll(session: NFCTagSession) -> Observable<Data> {
+        let size = MifareUltralightMemoryOrganization.totalSize()!
+        return self.read(session: session, start: MifareUltralightMemoryOrganization.USER_PAGES.first!, totalByte: Int(size))
+    }
+    
+    func readMessage(session: NFCTagSession, encoding: String.Encoding = .ascii) -> Observable<String> {
+        self.readAll(session: session).compactMap { String(data: $0, encoding: encoding) }
+    }
+}
+
+struct DefaultNFCTagReadService: NFCTagReadService {
+    
+    fileprivate let readTag: NFCTagRead
+    
+    fileprivate var NUMBER_BYTE_PER_ONE_READ: UInt8 { MifareUltralightMemoryOrganization.SIZE_PER_PAGE * self.NUMBER_PAGE_PER_ONE_READ }
+    fileprivate let NUMBER_PAGE_PER_ONE_READ: UInt8 = 4
+    
+    init(readTag: NFCTagRead) {
+        self.readTag = readTag
+    }
+    
+    func read(session: NFCTagSession, start page: UInt8, totalByte: Int) -> Observable<Data> {
+        guard MifareUltralightMemoryOrganization.containUserPages(of: page) else { return .error(ErrorCode.ReadNFCTagError.notExistPage) }
+        guard totalByte != .zero else { return .error(ErrorCode.ReadNFCTagError.notRead) }
+        
+        let totalByteOfPage = MifareUltralightMemoryOrganization.totalSize(start: page)!
+        
+        let total = totalByte > totalByteOfPage ? totalByteOfPage : UInt8(totalByte)
+        
+        var pagesRead: [UInt8] = []
+        
+        if total <= self.NUMBER_BYTE_PER_ONE_READ {
+            pagesRead = [page]
+        } else {
+            let numberPageRead = (total / self.NUMBER_BYTE_PER_ONE_READ) + (total % self.NUMBER_BYTE_PER_ONE_READ == 0 ? 0 : 1)
+            (0..<numberPageRead).forEach { (offset) in
+                pagesRead.append(page + offset * self.NUMBER_PAGE_PER_ONE_READ)
+            }
+        }
+        
+        return Observable
+            .combineLatest(pagesRead.map { self.readTag.read(session: session, start: $0) })
+            .map { (data) -> Data in
+                var result = data.reduce(Data()) { (result, element) -> Data in
+                    var r = result
+                    r.append(element)
+                    return r
+                }
+                result.removeAll(where: { $0 == 0x00 })
+                return result
+            }
+    }
+}
+
+
+extension ErrorCode {
+    enum ReadNFCTagError: Int, LocalizedError {
+        case notExistPage = 0
+        case notRead = 1
+        
+        var localizedDescription: String {
+            switch self {
+            case .notExistPage: return "Not exist Page"
+            case .notRead: return "Not read"
+            }
         }
     }
 }

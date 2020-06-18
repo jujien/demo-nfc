@@ -15,18 +15,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="deO-Ze-zl9">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JTc-sc-q7O">
                                 <rect key="frame" x="190" y="433" width="34" height="30"/>
-                                <state key="normal" title="Start"/>
+                                <state key="normal" title="write"/>
                                 <connections>
-                                    <action selector="startDidTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="zob-LS-3GT"/>
+                                    <action selector="writeDidTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="eBA-Hx-3Fh"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="deO-Ze-zl9" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="AVq-CE-rJx"/>
-                            <constraint firstItem="deO-Ze-zl9" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="ebE-BG-bfA"/>
+                            <constraint firstItem="JTc-sc-q7O" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="7cZ-SI-yp6"/>
+                            <constraint firstItem="JTc-sc-q7O" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="u36-b7-I2z"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>

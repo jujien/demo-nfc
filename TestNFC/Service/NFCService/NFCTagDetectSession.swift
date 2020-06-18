@@ -10,6 +10,7 @@ import Foundation
 import RxSwift
 //import CombineExt
 import CoreNFC
+import RxCocoa
 
 protocol NFCTagDetectSession {
     var session: Observable<NFCTagSession> { get }
@@ -17,19 +18,24 @@ protocol NFCTagDetectSession {
     var active: Observable<()> { get }
     
     func begin(pollingOption: NFCTagReaderSession.PollingOption, startMessage: String)
+    
+    func end()
+    
+    func end(error: String)
 }
 
-class DefaultNFCTagConnectSession: NSObject {
+class DefaultNFCTagDetectSession: NSObject {
     fileprivate var didActive: PublishSubject<()> = .init()
     fileprivate let _session = PublishSubject<NFCTagSession>()
     fileprivate var readerSession: NFCReaderSession?
     
     override init() {
         super.init()
+        
     }
 }
 
-extension DefaultNFCTagConnectSession: NFCTagDetectSession {
+extension DefaultNFCTagDetectSession: NFCTagDetectSession {
     var session: Observable<NFCTagSession> { self._session.asObservable() }
 
     var active: Observable<()> { self.didActive.asObservable() }
@@ -39,9 +45,19 @@ extension DefaultNFCTagConnectSession: NFCTagDetectSession {
         self.readerSession?.alertMessage = startMessage
         self.readerSession?.begin()
     }
+    
+    func end() {
+        self.readerSession?.invalidate()
+        self.readerSession = nil
+    }
+    
+    func end(error: String) {
+        self.readerSession?.invalidate(errorMessage: error)
+        self.readerSession = nil 
+    }
 }
 
-extension DefaultNFCTagConnectSession: NFCTagReaderSessionDelegate {
+extension DefaultNFCTagDetectSession: NFCTagReaderSessionDelegate {
     func tagReaderSessionDidBecomeActive(_ session: NFCTagReaderSession) {
         self.didActive.onNext(())
     }
@@ -51,8 +67,11 @@ extension DefaultNFCTagConnectSession: NFCTagReaderSessionDelegate {
     }
 
     func tagReaderSession(_ session: NFCTagReaderSession, didDetect tags: [NFCTag]) {
+        print("Detected")
         self._session.onNext(.init(tags: tags, session: session))
     }
 
 
 }
+
+

@@ -9,7 +9,8 @@
 import UIKit
 import CoreNFC
 import CommonCrypto
-import Combine
+import RxSwift
+import RxCocoa
 //import CombineExt
 
 let KEY = "qMVsOd8szYWv!HQU"//"BREAKMEIFYOUCAN!"//"BREAKMEIFYOUCAN!"
@@ -20,23 +21,91 @@ class ViewController: UIViewController {
 //    var session: NFCNDEFReaderSession?
     
     var session: NFCTagReaderSession?
-    let newKey: String = String.randomString(length: 16)
+//    let newKey: String = String.randomString(length: 16)
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(self.newKey)
-        print(self.newKey.data(using: .ascii)?.hexEncodedString())
+//        print(self.newKey)
+//        print(self.newKey.data(using: .ascii)?.hexEncodedString())
+//        let observable = Observable.combineLatest(self.detect.session, self.action)
+//            .filter { $0.1 != .none }
+//            .withLatestFrom(Observable.just(self), resultSelector: { ($0, $1) })
+//            .flatMap { (tuple, vc) -> Observable<(NFCTagSession, Action)> in
+//                return vc.connect.connect(session: tuple.0)
+//                    .map { ($0, tuple.1) }
+//            }
+//            .withLatestFrom(Observable.just(self), resultSelector: { ($0, $1) })
+//            .flatMap { (tuple, vc) -> Observable<(NFCTagSession, Action)> in
+//            return vc.authentication.authenticate(session: tuple.0)
+//                .map { ($0, tuple.1) }
+//            }
+//        .catchError({ (error) -> Observable<(NFCTagSession, Action)> in
+//            self.detect.end(error: error.localizedDescription)
+//            return .empty()
+//        })
+//        .debug()
+//            .share()
+//        observable.filter { $0.1 == .read }.map { $0.0 }
+//            .withLatestFrom(Observable.just(self), resultSelector: { ($0, $1) })
+//            .flatMap { (session, vc) -> Observable<String> in
+//                return vc.read.readMessage(session: session, encoding: .utf8)
+//                    .catchError { (error) -> Observable<String> in
+//                        session.session.invalidate(errorMessage: error.localizedDescription)
+//                        return .empty()
+//                    }
+//            }
+//    .debug()
+//        .subscribe(onNext: { (message) in
+//            print(message)
+//            self.detect.end()
+//        })
+//            .disposed(by: self.disposeBag)
+//
+//        observable.filter { $0.1 == .writeEmpty }.map { $0.0 }
+//            .withLatestFrom(Observable.just(self), resultSelector: { ($0, $1) })
+//            .flatMap { (session, vc) -> Observable<Data> in
+//                return vc.write.empty(session: session)
+//                    .catchError { (error) -> Observable<Data> in
+//                        session.session.invalidate(errorMessage: error.localizedDescription)
+//                        return .empty()
+//                }
+//            }
+//        .subscribe(onNext: { (data) in
+//            print(data.hexEncodedString())
+//            self.detect.end()
+//        })
+//            .disposed(by: self.disposeBag)
+//
+//        observable.filter { $0.1 == .write }.map { $0.0 }
+//            .withLatestFrom(Observable.just(self), resultSelector: { ($0, $1) })
+//            .flatMap { (session, vc) -> Observable<Data> in
+//                let text = "Hello, world! This is mifare ultralight c"
+//                return vc.write.write(session: session, text: text, encoding: .utf8)
+//                    .catchError { (error) -> Observable<Data> in
+//                        session.session.invalidate(errorMessage: error.localizedDescription)
+//                        return .empty()
+//                }
+//        }
+//        .subscribe(onNext: { (data) in
+//            print(data.hexEncodedString())
+//            self.detect.end()
+//        })
+//            .disposed(by: self.disposeBag)
     }
     
-
-    @IBAction func startDidTapped(_ sender: Any) {
-        guard NFCReaderSession.readingAvailable else {
-            return
-        }
-        self.session = NFCTagReaderSession(pollingOption: [.iso14443, .iso15693], delegate: self, queue: nil)
-        self.session?.alertMessage = "Hold your device near a tag to scan it."
-        self.session?.begin()
+    @IBAction func writeDidTapped(_ sender: Any) {
+//        self.action.accept(.write)
+//        self.detect.begin(pollingOption: [.iso14443, .iso15693], startMessage: "Hold your device near a tag to scan it.")
     }
+    
+    //        @IBAction func startDidTapped(_ sender: Any) {
+    //        guard NFCReaderSession.readingAvailable else {
+    //            return
+    //        }
+    //        self.session = NFCTagReaderSession(pollingOption: [.iso14443, .iso15693], delegate: self, queue: nil)
+    //        self.session?.alertMessage = "Hold your device near a tag to scan it."
+    //        self.session?.begin()
+    //    }
     
     func fillKey(keyLength: size_t, key: Data) -> Data {
         let missingBytes = keyLength - key.count
@@ -114,6 +183,7 @@ extension ViewController: NFCTagReaderSessionDelegate {
     
     func tagReaderSession(_ session: NFCTagReaderSession, didInvalidateWithError error: Error) {
         print(error.localizedDescription)
+        UITableView().rx.itemSelected
     }
     
     func tagReaderSession(_ session: NFCTagReaderSession, didDetect tags: [NFCTag]) {
@@ -166,34 +236,34 @@ extension ViewController: NFCTagReaderSessionDelegate {
                             }
                             if self.rotateLeft(in: randomA) == decrypt {
                                 
-                                mifareTag.sendMiFareCommand(commandPacket: Data([0x30, 0x03])) { (data, error) in
-                                    if let error = error {
-                                        print("error: \(error.localizedDescription)")
-                                        session.invalidate(errorMessage: "Not read")
-                                    } else {
-                                        let text = "HILL"
-                                        print(text.data(using: .ascii)!.hexEncodedString())
-                                        print(data.hexEncodedString())
-                                        session.alertMessage = "Read success"
-                                        session.invalidate()
-                                    }
-                                }
-                                
-//                                let text = "HILL"
-//                                var write: [UInt8] = [0xa2, 0x04]
-//                                write.append(contentsOf: text.data(using: .ascii)!.bytes)
-//                                let commandData = write.data
-//                                print(commandData.hexEncodedString())
-//                                mifareTag.sendMiFareCommand(commandPacket: commandData) { (data, error) in
+//                                mifareTag.sendMiFareCommand(commandPacket: Data([0x30, 0x03])) { (data, error) in
 //                                    if let error = error {
 //                                        print("error: \(error.localizedDescription)")
-//                                        session.invalidate(errorMessage: "Not write")
+//                                        session.invalidate(errorMessage: "Not read")
 //                                    } else {
+//                                        let text = "HILL"
+//                                        print(text.data(using: .ascii)!.hexEncodedString())
 //                                        print(data.hexEncodedString())
-//                                        session.alertMessage = "Write Success"
+//                                        session.alertMessage = "Read success"
 //                                        session.invalidate()
 //                                    }
 //                                }
+//
+                                let text = "HILL"
+                                var write: [UInt8] = [0xa2, 0x04]
+                                write.append(contentsOf: text.data(using: .ascii)!.bytes)
+                                let commandData = write.data
+                                print(commandData.hexEncodedString())
+                                mifareTag.sendMiFareCommand(commandPacket: commandData) { (data, error) in
+                                    if let error = error {
+                                        print("error: \(error.localizedDescription)")
+                                        session.invalidate(errorMessage: "Not write")
+                                    } else {
+                                        print(data.hexEncodedString())
+                                        session.alertMessage = "Write Success"
+                                        session.invalidate()
+                                    }
+                                }
 /*
                                 // Set new key
                                 let keyData = self.newKey.data(using: .ascii)!.bytes

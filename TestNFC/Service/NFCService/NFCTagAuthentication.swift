@@ -82,7 +82,6 @@ extension DefaultNFCTagAuthentication: NFCTagAuthentication {
             session.receiveData = Data()
             session.command = command.data
             session.iv = encrypt[8..<16]
-            
             return .just(session)
         }
         .flatMap { (session) -> Observable<AuthenticationSession> in
@@ -104,10 +103,10 @@ extension DefaultNFCTagAuthentication: NFCTagAuthentication {
             if session.receiveData.count == 9 && session.receiveData[0] == CommandMifareUltralight.END_AUTHENTICATE {
                 var session = session
                 session.receiveData = session.receiveData[1..<9]
+                return .just(session)
             } else {
                 return .error(ErrorCode.AuthenticationNFCError.failed)
             }
-            return .empty()
         }
         .withLatestFrom(Observable.just(self), resultSelector: { ($0, $1)})
         .flatMap { (session, service) -> Observable<NFCTagSession> in
