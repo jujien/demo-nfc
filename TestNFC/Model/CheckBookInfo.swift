@@ -16,4 +16,5 @@ struct CheckBookInfo {
 struct CheckBookResult {
     var status: Bool
     var newData: String?
+    
 }

@@ -16,3 +16,10 @@ extension Array where Element == UInt8 {
         return self.map { String(format: format, $0) }.joined(separator: ":")
     }
 }
+
+extension Array where Element == Int {
+    func hexEncodedString(options: Data.HexEncodingOptions = []) -> String {
+        let format = options.contains(.upperCase) ? "%02hhX" : "%02hhx"
+        return self.map { String(format: format, $0) }.joined(separator: ":")
+    }
+}

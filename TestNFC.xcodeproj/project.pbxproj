@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F116D2EE249C69BD0050DC7D /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = F116D2ED249C69BD0050DC7D /* CryptoSwift */; };
 		F121A2FD2477B48900C5C8FD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F121A2FC2477B48900C5C8FD /* AppDelegate.swift */; };
 		F121A2FF2477B48900C5C8FD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F121A2FE2477B48900C5C8FD /* SceneDelegate.swift */; };
 		F121A3012477B48900C5C8FD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F121A3002477B48900C5C8FD /* ViewController.swift */; };
@@ -67,6 +68,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F1FD2595249B16630071AEBA /* RxCocoa in Frameworks */,
+				F116D2EE249C69BD0050DC7D /* CryptoSwift in Frameworks */,
 				F1FD2593249B16630071AEBA /* RxSwift in Frameworks */,
 				F121A3132477B8A000C5C8FD /* CoreNFC.framework in Frameworks */,
 			);
@@ -213,6 +215,7 @@
 			packageProductDependencies = (
 				F1FD2592249B16630071AEBA /* RxSwift */,
 				F1FD2594249B16630071AEBA /* RxCocoa */,
+				F116D2ED249C69BD0050DC7D /* CryptoSwift */,
 			);
 			productName = TestNFC;
 			productReference = F121A2F92477B48900C5C8FD /* TestNFC.app */;
@@ -244,6 +247,7 @@
 			mainGroup = F121A2F02477B48900C5C8FD;
 			packageReferences = (
 				F1FD2591249B16630071AEBA /* XCRemoteSwiftPackageReference "RxSwift" */,
+				F116D2EC249C69BD0050DC7D /* XCRemoteSwiftPackageReference "CryptoSwift" */,
 			);
 			productRefGroup = F121A2FA2477B48900C5C8FD /* Products */;
 			projectDirPath = "";
@@ -491,6 +495,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		F116D2EC249C69BD0050DC7D /* XCRemoteSwiftPackageReference "CryptoSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/krzyzanowskim/CryptoSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.1;
+			};
+		};
 		F1FD2591249B16630071AEBA /* XCRemoteSwiftPackageReference "RxSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
@@ -502,6 +514,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		F116D2ED249C69BD0050DC7D /* CryptoSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F116D2EC249C69BD0050DC7D /* XCRemoteSwiftPackageReference "CryptoSwift" */;
+			productName = CryptoSwift;
+		};
 		F1FD2592249B16630071AEBA /* RxSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F1FD2591249B16630071AEBA /* XCRemoteSwiftPackageReference "RxSwift" */;

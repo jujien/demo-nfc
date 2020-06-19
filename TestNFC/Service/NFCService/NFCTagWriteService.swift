@@ -24,7 +24,6 @@ struct DefaultNFCTagWrite: NFCTagWrite {
         return .create { (observer) -> Disposable in
             var command = [CommandMifareUltralight.WRITE, page]
             command.append(contentsOf: data)
-            print(command.hexEncodedString())
             tag.sendMiFareCommand(commandPacket: command.data) { (data, error) in
                 if let error = error {
                     observer.onError(error)
@@ -67,12 +66,19 @@ struct DefaultNFCTagWriteService: NFCTagWriteService {
     
     func write(session: NFCTagSession, data: Data, start page: UInt8) -> Observable<Data> {
         guard MifareUltralightMemoryOrganization.containUserPages(of: page) else { return .error(ErrorCode.WriteNFCTagError.notExistPage) }
-        
-        guard MifareUltralightMemoryOrganization.enoughMemory(data: data, page: page) else { return .error(ErrorCode.WriteNFCTagError.notEnoughMemory) }
-                
+                        
         let index = MifareUltralightMemoryOrganization.USER_PAGES.firstIndex(of: page)!
+        var bytes: [UInt8] = []
+        if data.bytes.filter({ $0 == 0x00 }).count == data.count {
+            bytes = data.bytes
+        } else {
+            bytes = withUnsafeBytes(of: Int32(data.count).bigEndian, Array.init)
+            bytes.append(contentsOf: data.bytes)
+        }
         
-        let items = self.pages(bytes: data.bytes)
+        guard MifareUltralightMemoryOrganization.enoughMemory(data: bytes.data, page: page) else { return .error(ErrorCode.WriteNFCTagError.notEnoughMemory) }
+        
+        let items = self.pages(bytes: bytes)
         let pages = MifareUltralightMemoryOrganization.USER_PAGES[index..<items.count]
         
         let observables = zip(items, pages).map { (item, page) -> Observable<Data> in

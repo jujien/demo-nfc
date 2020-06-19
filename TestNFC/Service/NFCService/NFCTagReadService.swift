@@ -37,13 +37,13 @@ protocol NFCTagReadService {
 }
 
 extension NFCTagReadService {
-    func readAll(session: NFCTagSession) -> Observable<Data> {
+    func readData(session: NFCTagSession) -> Observable<Data> {
         let size = MifareUltralightMemoryOrganization.totalSize()!
         return self.read(session: session, start: MifareUltralightMemoryOrganization.USER_PAGES.first!, totalByte: Int(size))
     }
     
     func readMessage(session: NFCTagSession, encoding: String.Encoding = .ascii) -> Observable<String> {
-        self.readAll(session: session).compactMap { String(data: $0, encoding: encoding) }
+        self.readData(session: session).compactMap { String(data: $0, encoding: encoding) }
     }
 }
 
@@ -80,13 +80,20 @@ struct DefaultNFCTagReadService: NFCTagReadService {
         return Observable
             .combineLatest(pagesRead.map { self.readTag.read(session: session, start: $0) })
             .map { (data) -> Data in
-                var result = data.reduce(Data()) { (result, element) -> Data in
+                guard !data.isEmpty else { return Data() }
+                let bigEndianValue = data[0].bytes[0..<4].withUnsafeBufferPointer { $0.baseAddress!.withMemoryRebound(to: UInt32.self, capacity: 1) { $0 } }.pointee
+                let value = UInt32(bigEndian: bigEndianValue)
+                let result = data.reduce(Data()) { (result, element) -> Data in
                     var r = result
                     r.append(element)
                     return r
                 }
-                result.removeAll(where: { $0 == 0x00 })
-                return result
+                if value < 4 {
+                    return result
+                } else {
+                    return result[4...(value + 3)]
+                }
+                
             }
     }
 }

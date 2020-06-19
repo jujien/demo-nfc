@@ -73,10 +73,10 @@ struct DefaultCheckService: CheckService {
         .withLatestFrom(Observable.just(self), resultSelector: { ($0, $1) })
         .flatMap { (session, service) -> Observable<CheckSession> in
             guard case .miFare(let tag) = session.tags[0] else { return .empty() }
-            return service.read
-                .readMessage(session: session, encoding: .ascii)
+            return service.read.readData(session: session)
                 .map { (data) -> CheckSession in
-                    return .init(session: session, info: .init(uid: tag.identifier.hexEncodedString(), data: data), result: .init(status: false, newData: nil))
+                    print(data.hexEncodedString())
+                    return .init(session: session, info: .init(uid: tag.identifier.hexEncodedString(), data: data.base64EncodedString()), result: .init(status: false, newData: nil))
                 }
                 .catchError { (error) -> Observable<CheckSession> in
                     session.session.invalidate(errorMessage: "Error")
@@ -100,6 +100,7 @@ struct DefaultCheckService: CheckService {
     
     fileprivate func update(data: Observable<CheckSession>) {
         data.filter { $0.result.newData == nil }.subscribe(onNext: { (session) in
+            session.session.session.alertMessage = "OK"
             session.session.session.invalidate()
         })
             .disposed(by: self.disposeBag)
@@ -107,15 +108,29 @@ struct DefaultCheckService: CheckService {
         data.filter { $0.result.newData != nil }
             .withLatestFrom(Observable.just(self), resultSelector: { ($0, $1) })
             .flatMap { (session, service) -> Observable<CheckSession> in
-                return service.write
-                    .write(session: session.session, text: session.result.newData!)
-                    .map { (_) -> CheckSession in
-                        return session
-                    }
-                .catchError { (error) -> Observable<CheckSession> in
+                guard let data = Data(base64Encoded: session.result.newData!), MifareUltralightMemoryOrganization.enoughMemory(data: data, page: MifareUltralightMemoryOrganization.USER_PAGES[0]) else {
                     session.session.session.alertMessage = "Success"
                     session.session.session.invalidate()
                     return .empty()
+                }
+                 return service.write.empty(session: session.session)
+                    .catchError { (error) -> Observable<Data> in
+                        print(error.localizedDescription)
+                        session.session.session.alertMessage = "Success"
+                        session.session.session.invalidate()
+                        return .empty()
+                    }
+                    .flatMap { (_) -> Observable<CheckSession> in
+                        return service.write.write(session: session.session, data: data)
+                            .map { (_) -> CheckSession in
+                                return session
+                            }
+                        .catchError { (error) -> Observable<CheckSession> in
+                            print(error.localizedDescription)
+                            session.session.session.alertMessage = "Success"
+                            session.session.session.invalidate()
+                            return .empty()
+                        }
                 }
             }
         .do(onNext: { (session) in
