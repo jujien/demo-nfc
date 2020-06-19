@@ -22,14 +22,25 @@
                                     <action selector="writeDidTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="eBA-Hx-3Fh"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Khong biet" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XsT-rU-2vC">
+                                <rect key="frame" x="165" y="372" width="84" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="JTc-sc-q7O" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="7cZ-SI-yp6"/>
+                            <constraint firstItem="XsT-rU-2vC" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="aIG-j5-68I"/>
+                            <constraint firstItem="JTc-sc-q7O" firstAttribute="top" secondItem="XsT-rU-2vC" secondAttribute="bottom" constant="40" id="lJf-00-gZc"/>
                             <constraint firstItem="JTc-sc-q7O" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="u36-b7-I2z"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <connections>
+                        <outlet property="statusLabel" destination="XsT-rU-2vC" id="Xj2-dJ-bdc"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>

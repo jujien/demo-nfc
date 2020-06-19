@@ -17,6 +17,8 @@ protocol NFCTagDetectSession {
     
     var active: Observable<()> { get }
     
+    var error: Observable<NFCReaderError> { get }
+    
     func begin(pollingOption: NFCTagReaderSession.PollingOption, startMessage: String)
     
     func end()
@@ -27,6 +29,7 @@ protocol NFCTagDetectSession {
 class DefaultNFCTagDetectSession: NSObject {
     fileprivate var didActive: PublishSubject<()> = .init()
     fileprivate let _session = PublishSubject<NFCTagSession>()
+    fileprivate let _error = BehaviorSubject<NFCReaderError?>(value: nil)
     fileprivate var readerSession: NFCReaderSession?
     
     override init() {
@@ -39,6 +42,8 @@ extension DefaultNFCTagDetectSession: NFCTagDetectSession {
     var session: Observable<NFCTagSession> { self._session.asObservable() }
 
     var active: Observable<()> { self.didActive.asObservable() }
+    
+    var error: Observable<NFCReaderError> { self._error.compactMap { $0 } }
 
     func begin(pollingOption: NFCTagReaderSession.PollingOption, startMessage: String) {
         self.readerSession = NFCTagReaderSession(pollingOption: pollingOption, delegate: self)
@@ -63,12 +68,12 @@ extension DefaultNFCTagDetectSession: NFCTagReaderSessionDelegate {
     }
 
     func tagReaderSession(_ session: NFCTagReaderSession, didInvalidateWithError error: Error) {
-        self._session.onError(error)
+        self._error.onNext(NFCReaderError(_nsError: error as NSError))
     }
 
     func tagReaderSession(_ session: NFCTagReaderSession, didDetect tags: [NFCTag]) {
-        print("Detected")
         self._session.onNext(.init(tags: tags, session: session))
+        self._error.onNext(nil)
     }
 
 

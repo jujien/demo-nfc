@@ -19,6 +19,8 @@
 		F18B32E8249B1DF600F92919 /* NFCTagReadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18B32E7249B1DF600F92919 /* NFCTagReadService.swift */; };
 		F18B32EA249B1ED100F92919 /* NFCTagWriteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18B32E9249B1ED100F92919 /* NFCTagWriteService.swift */; };
 		F18B32ED249B74DB00F92919 /* CheckService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18B32EC249B74DB00F92919 /* CheckService.swift */; };
+		F18B32F0249BB77700F92919 /* CheckNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18B32EF249BB77700F92919 /* CheckNetwork.swift */; };
+		F18B32F2249BB88100F92919 /* CheckBookInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18B32F1249BB88100F92919 /* CheckBookInfo.swift */; };
 		F1ECA668249A177B0072D850 /* NFCTagSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1ECA667249A177B0072D850 /* NFCTagSession.swift */; };
 		F1ECA66C249A17C30072D850 /* NFCTagDetectSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1ECA66B249A17C30072D850 /* NFCTagDetectSession.swift */; };
 		F1ECA66E249A1AD50072D850 /* NFCTagAuthentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1ECA66D249A1AD50072D850 /* NFCTagAuthentication.swift */; };
@@ -47,6 +49,8 @@
 		F18B32E7249B1DF600F92919 /* NFCTagReadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCTagReadService.swift; sourceTree = "<group>"; };
 		F18B32E9249B1ED100F92919 /* NFCTagWriteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCTagWriteService.swift; sourceTree = "<group>"; };
 		F18B32EC249B74DB00F92919 /* CheckService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckService.swift; sourceTree = "<group>"; };
+		F18B32EF249BB77700F92919 /* CheckNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckNetwork.swift; sourceTree = "<group>"; };
+		F18B32F1249BB88100F92919 /* CheckBookInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckBookInfo.swift; sourceTree = "<group>"; };
 		F1ECA667249A177B0072D850 /* NFCTagSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCTagSession.swift; sourceTree = "<group>"; };
 		F1ECA66B249A17C30072D850 /* NFCTagDetectSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCTagDetectSession.swift; sourceTree = "<group>"; };
 		F1ECA66D249A1AD50072D850 /* NFCTagAuthentication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCTagAuthentication.swift; sourceTree = "<group>"; };
@@ -91,6 +95,7 @@
 		F121A2FB2477B48900C5C8FD /* TestNFC */ = {
 			isa = PBXGroup;
 			children = (
+				F18B32EE249BB76600F92919 /* Network */,
 				F1FD258E249B10E20071AEBA /* Error */,
 				F1ECA672249A1B500072D850 /* Util */,
 				F1ECA669249A17A20072D850 /* Service */,
@@ -123,10 +128,19 @@
 			path = CheckService;
 			sourceTree = "<group>";
 		};
+		F18B32EE249BB76600F92919 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				F18B32EF249BB77700F92919 /* CheckNetwork.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
 		F1ECA666249A17710072D850 /* Model */ = {
 			isa = PBXGroup;
 			children = (
 				F1ECA667249A177B0072D850 /* NFCTagSession.swift */,
+				F18B32F1249BB88100F92919 /* CheckBookInfo.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -260,10 +274,12 @@
 			files = (
 				F1FD2590249B10F50071AEBA /* ErrorCode.swift in Sources */,
 				F1ECA671249A1B310072D850 /* TripleDESService.swift in Sources */,
+				F18B32F0249BB77700F92919 /* CheckNetwork.swift in Sources */,
 				F1ECA674249A1B5C0072D850 /* Data+Extension.swift in Sources */,
 				F1ECA66C249A17C30072D850 /* NFCTagDetectSession.swift in Sources */,
 				F1570687249A25BB00B744DB /* CommandMifareUltralight.swift in Sources */,
 				F1ECA676249A1B940072D850 /* Array+Extension.swift in Sources */,
+				F18B32F2249BB88100F92919 /* CheckBookInfo.swift in Sources */,
 				F18B32EA249B1ED100F92919 /* NFCTagWriteService.swift in Sources */,
 				F121A3012477B48900C5C8FD /* ViewController.swift in Sources */,
 				F1ECA668249A177B0072D850 /* NFCTagSession.swift in Sources */,

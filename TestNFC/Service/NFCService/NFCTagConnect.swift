@@ -23,7 +23,6 @@ struct DefaultNFCTagConnect: NFCTagConnect {
         return .create { (observer) -> Disposable in
             session.session.connect(to: session.tags[0]) { (error) in
                 if let error = error {
-                    print(error.localizedDescription)
                     observer.onError(error)
                 } else {
                     observer.onNext(session)
